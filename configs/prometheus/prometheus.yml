@@ -1,0 +1,36 @@
+---
+global:
+  scrape_interval: 10s  # How frequently to scrape/ping targets by default
+  scrape_timeout: 5s  # How long until a scrape request times out.
+  evaluation_interval: 10s  # Dictates how often Prometheus evaluates its alerting rules.
+
+# scrape_configs:
+#   - job_name: icmp
+#     metrics_path: /probe
+#     params:
+#       module: [icmp]
+#     static_configs:
+#       - targets:
+#         - 8.8.8.8
+#         - 1.1.1.1
+#     relabel_configs:
+#       - source_labels: [__address__]
+#         target_label: __param_target
+#       - source_labels: [__param_target]
+#         target_label: instance
+#       - target_label: __address__
+#         replacement: 10.0.10.2:9115
+#   - job_name: http
+#     metrics_path: /probe
+#     params:
+#       module: [http_2xx]
+#     static_configs:
+#       - targets:
+#         # - example.com
+#     relabel_configs:
+#       - source_labels: [__address__]
+#         target_label: __param_target
+#       - source_labels: [__param_target]
+#         target_label: instance
+#       - target_label: __address__
+#         replacement: 10.0.10.2:9115
