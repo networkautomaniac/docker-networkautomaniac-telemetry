@@ -1,0 +1,75 @@
+---
+api:
+  enabled: true
+  address: "0.0.0.0:8686"
+
+sources:
+  unifi_syslog:
+    type: "syslog"
+    address: "0.0.0.0:514"
+    mode: "udp"
+
+transforms:
+  final_formatted_syslogs:
+    type: "remap"
+    inputs:
+      - "unifi_syslog"
+    source: |
+      # Delete Fields
+      del(.appname)
+      del(.hostname)
+
+      # Update Source IP
+      .source_ip = "10.0.99.1"
+
+      # Add Key & Value
+      .label = "unifi_syslog"
+
+      .parsed_message = parse_key_value!(.message)
+
+      if length(.parsed_message) == 0 {
+        .parsed_message = parse_syslog!(.message)
+      }
+
+      if length(.parsed_message) > 0 {
+        del(.message)
+      } else {
+        .couldnt_parse = .message
+      }
+
+sinks:
+  # Console Output
+  console:
+    type: "console"
+    inputs:
+      - "final_formatted_syslogs"
+    encoding:
+      codec: "json"
+      json:
+        pretty: true
+    target: "stdout"
+
+  # File Output
+  file:
+    type: "file"
+    inputs:
+      - "final_formatted_syslogs"
+    encoding:
+      codec: "json"
+      json:
+        pretty: true
+    path: "/etc/vector/syslog.json"
+
+  # Loki
+  loki:
+    type: "loki"
+    inputs:
+      - "final_formatted_syslogs"
+    endpoint: "${LOKI_URL}"
+    labels:
+      source: vector
+    encoding:
+      codec: "json"
+    batch:
+      max_events: 100
+      timeout: "100ms"
