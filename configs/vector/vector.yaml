@@ -67,7 +67,7 @@ sinks:
       - "final_formatted_syslogs"
     endpoint: "${LOKI_URL}"
     labels:
-      source: vector
+      source: "vector"
     encoding:
       codec: "json"
     batch:

@@ -57,7 +57,7 @@ services:
       - "514:514/udp"
     environment:
       - "LOKI_URL=${LOKI_URL}"
-      - TZ=America/Indiana/Indianapolis
+      - "TZ=${TZ}"
     volumes:
       - "./configs/vector/vector.yaml:/etc/vector/vector.yaml"
     depends_on:
@@ -71,7 +71,7 @@ services:
     ports:
       - "3100:3100"
     environment:
-      - TZ=America/Indiana/Indianapolis
+      - "TZ=${TZ}"
     volumes:
       - "./configs/loki/local-config.yaml:/etc/loki/local-config.yaml"
       - "loki-data:/loki/data"
